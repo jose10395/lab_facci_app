@@ -19,6 +19,7 @@ import { MateriaService } from './api/materia.service';
 import { UsuarioService } from './api/usuario.service';
 import { AuthGuardService } from './api/auth-guard.service';
 import { StorageService } from './api/storage.service';
+import { PopoverComponent } from './home/popover/popover.component';
 
 
 @NgModule({

@@ -1,44 +1,72 @@
 <ion-content>
-  <ion-grid>
-    <ion-row class="ion-justify-content-center">
-      <ion-col
-        class="ion-align-self-start"
-        size-md="6"
-        size-lg="5"
-        size-xs="12"
-      >
-        <div class="ion-text-center">
-          <img src="./assets/imgs/firebase_logo.png" alt="">
-        </div>
-        <div class="ion-padding">
-          <ion-item color="light">
-            <ion-input clearInput="true"
-              type="text"
-              [(ngModel)]="usuario"
-              placeholder="usuario"
-            ></ion-input>
-          </ion-item>
-          <br />
-          <ion-item color="light">
-            <ion-input clearInput="true"
-              type="password"
-              [(ngModel)]="password"
-              placeholder="password"
-            ></ion-input>
-          </ion-item>
-        </div>
+  <div class="box">
+    <div>
+      <!-- Logo -->
+      <!-- <div class="logo-div">
+          <div>
+            <img src="./assets/imgs/logo.png" alt="" height="150em" />
+          </div>
+      </div> -->
+      <ion-grid style="width: 110% !Important;">
+        <ion-row>
+          <ion-col>
+            <div class="ion-text-center">
+              <img src="./assets/imgs/logo.png" alt="" height="180em" />
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
 
-        <div class="ion-padding">
-          <ion-button
-            color="warning"
-            size="md"
-            expand="block"
-            (click)="login()"
-            [disabled]="disabled"
-            >Ingresar</ion-button
-          >
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+      <!-- Login form -->
+      <form class="list-form">
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon
+              name="person"
+              class="icon icon-md ion-md-person"
+              aria-label="username"
+            ></ion-icon>
+            Usuario
+          </ion-label>
+          <ion-input
+            clearInput="true"
+            type="text"
+            [(ngModel)]="usuario"
+            [ngModelOptions]="{standalone: true}"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon name="lock" item-start class="text-primary"></ion-icon>
+            Contraseña
+          </ion-label>
+          <ion-input
+            clearInput="true"
+            type="password"
+            [(ngModel)]="password"
+            [ngModelOptions]="{standalone: true}"
+          ></ion-input>
+        </ion-item>
+      </form>
+
+      <div class="ion-padding" style="width: 100% !Important;">
+        <ion-button
+          color="success"
+          expand="block"
+          (click)="login()"
+          [disabled]="disabled"
+        >
+          Ingresar
+        </ion-button>
+      </div>
+
+      <!-- registro -->
+      <div class="ion-margin-top ion-text-center">
+        <span ion-text color="secondary" tappable (click)="register()"
+          >Eres Nuevo? <strong>Registrate Aquí</strong></span
+        >
+      </div>
+    </div>
+  </div>
 </ion-content>

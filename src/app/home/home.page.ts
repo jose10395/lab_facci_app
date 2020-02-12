@@ -1,35 +1,47 @@
 import { map } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Materia, MateriaService } from '../api/materia.service';
+import { Materia, MateriaService, Horario } from '../api/materia.service';
 import { Aula, AulaService } from '../api/aula.service';
 import { PopoverController, ActionSheetController } from '@ionic/angular';
 import { PopoverComponent } from './popover/popover.component';
 import { StorageService } from '../api/storage.service';
+import { getLocaleTimeFormat } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
 
   aula: Observable<Aula>;
-  materia: Materia = {
-    nombre: '', profesor: '', idaula: '',
-    aula: this.aula
-  };
+  horarios: Horario;
+  allowChange = false;
+  materia: Materia;
   public materias: Observable<Materia[]>;
-  // public materias: Materia[] = [];
-  // public aulas: Observable<Aula[]>;
   public aulas: Aula[] = [];
   constructor(private materiaService: MateriaService, private storageService: StorageService,
-    public popoverController: PopoverController, public actionSheetController: ActionSheetController) {
-
+    // tslint:disable-next-line: align
+    public popoverController: PopoverController, public actionSheetController: ActionSheetController,
+    // tslint:disable-next-line: align
+    private aulaService: AulaService) {
+    this.validateChange();
   }
 
   ngOnInit() {
     this.materias = this.materiaService.getMaterias();
+  }
+
+  ngOnDestroy() {
+    this.materias = null;
+  }
+
+  validateChange() {
+    const usuario = this.storageService.getCurrentUser();
+    if (usuario.tipo === 'Docente') {
+      this.allowChange = true;
+    }
   }
 
   guardar() {
@@ -51,10 +63,10 @@ export class HomePage implements OnInit {
   async presentActionSheet() {
     const actionSheet = await this.actionSheetController.create({
       header: 'Opciones',
+      mode: 'ios',
       buttons: [{
         text: 'Salir',
         role: 'destructive',
-        icon: 'log-out',
         handler: () => {
           this.storageService.logout();
         }
@@ -68,6 +80,14 @@ export class HomePage implements OnInit {
       }]
     });
     await actionSheet.present();
+  }
+
+  changeState(id, $event) {
+    const nuevoEstado = ($event.target.checked === true) ? 'Ocupada' : 'Libre';
+    this.aulaService.getAula(id).subscribe(data => {
+      data.estado = nuevoEstado;
+      this.aulaService.updateAula(data).then();
+    });
   }
 
 }

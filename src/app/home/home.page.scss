@@ -2,3 +2,19 @@
   max-height: 35vh;
   overflow: hidden;
 }
+
+.libre {
+  border: 1px solid;
+  padding: 2px;
+  border-radius: 5px;
+  background: limegreen;
+  color: white;
+}
+
+.ocupada{
+  border: 1px solid;
+  padding: 2px;
+  border-radius: 5px;
+  background: indianred;
+  color: white;
+}

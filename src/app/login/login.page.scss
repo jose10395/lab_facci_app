@@ -1,35 +1,21 @@
-$white-color: #34a845;
-$height100: 100%;
-$button-color: #fa9812;
-
-.item-background {
-  background: $white-color !important;
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  height: 100%;
 }
 
-ion-grid {
+.box div {
+  background: transparent;
+  width: 90%;
+}
+
+.logo-div {
+  display: flex;
+  background: red;
   width: 100%;
-  height: $height100;
-  background: #dfdfdf;
+  text-align: center;
+  justify-content: center;
 }
 
-ion-row {
-  height: $height100;
-}
-
-ion-col {
-  border: 1px solid #488aff;
-  background: $white-color;
-}
-
-ion-button {
-  font-weight: 300;
-}
-
-@media (min-width: 240px) and (max-width: 768px) {
-  ion-grid {
-    background: $white-color;
-  }
-  ion-col {
-    border: none;
-  }
-}

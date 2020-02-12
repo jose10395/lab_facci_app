@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Session } from './models/session';
 import { Usuario } from './models/usuario';
+import { NavController } from '@ionic/angular';
 
 @Injectable()
 export class StorageService {
   private localStorageService;
   private currentSession: Session = null;
-  constructor(private router: Router) {
+  constructor(private router: Router, private navCtrl: NavController) {
     this.localStorageService = localStorage;
     this.currentSession = this.loadSessionData();
   }
@@ -37,7 +38,8 @@ export class StorageService {
 
   logout(): void {
     this.removeCurrentSession();
-    this.router.navigate(['/login']);
+    this.navCtrl.setDirection('root');
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
 }

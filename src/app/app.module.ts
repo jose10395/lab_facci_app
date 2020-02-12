@@ -20,14 +20,16 @@ import { UsuarioService } from './api/usuario.service';
 import { AuthGuardService } from './api/auth-guard.service';
 import { StorageService } from './api/storage.service';
 import { PopoverComponent } from './home/popover/popover.component';
-
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({
+      mode: 'ios'
+    }),
     AppRoutingModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),

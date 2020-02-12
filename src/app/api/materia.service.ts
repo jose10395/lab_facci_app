@@ -1,16 +1,28 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
+import {
+  AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument,
+  DocumentReference, Query
+} from '@angular/fire/firestore';
 import { map, take } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, pipe } from 'rxjs';
 import { AulaService, Aula } from './aula.service';
 
 export interface Materia {
   id?: string;
   idaula: string;
+  idaula2: string;
   nombre: string;
   profesor: string;
+  curso: string;
   aula: Observable<Aula>;
+  horario: Horario;
+}
+
+export interface Horario {
+  dia: string;
+  horafin: string;
+  horainicio: string;
 }
 
 @Injectable({
@@ -26,13 +38,12 @@ export class MateriaService {
     this.materias = this.materiaCollection.snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
-          const data = a.payload.doc.data();
-          // this.aulaService.getAula(data.idaula).subscribe(data2 => {
-          //   data.aula = data2;
-          // });
-          data.aula = this.aulaService.getAula(data.idaula);
-          // data.aulaData  = { nombre: '', estado: '', numeroAula: '', tipo: '', actividad: '' };
           const id = a.payload.doc.id;
+          const data = a.payload.doc.data();
+
+          console.warn(data);
+
+          data.aula = this.aulaService.getAula(data.idaula);
           return { id, ...data };
         });
       })

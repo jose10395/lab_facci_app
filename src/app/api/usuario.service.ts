@@ -2,7 +2,7 @@ import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from './models/usuario';
-import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestoreCollection, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +24,13 @@ export class UsuarioService {
     );
   }
 
-
   getUsuarios(): Observable<Usuario[]> {
     return this.usuarios;
   }
+
+  addUsuario(model: any): Promise<DocumentReference> {
+    return this.usuarioCollection.add(JSON.parse(JSON.stringify(model)));
+  }
+
 
 }

@@ -1,3 +1,5 @@
+import { GlobalService } from './api/global.service';
+import { NotificacionService } from './api/notificacion.service';
 import { environment } from './../environments/environment.prod';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,6 +22,7 @@ import { UsuarioService } from './api/usuario.service';
 import { AuthGuardService } from './api/auth-guard.service';
 import { StorageService } from './api/storage.service';
 import { PopoverComponent } from './home/popover/popover.component';
+import { MatriculaService } from './api/matricula.service';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -40,7 +43,7 @@ import { PopoverComponent } from './home/popover/popover.component';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
-    AulaService, MateriaService, UsuarioService, AuthGuardService, StorageService
+    AulaService, MateriaService, UsuarioService, AuthGuardService, StorageService, MatriculaService, NotificacionService, GlobalService
   ],
   bootstrap: [AppComponent]
 })

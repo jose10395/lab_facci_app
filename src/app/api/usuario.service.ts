@@ -1,4 +1,4 @@
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from './models/usuario';
@@ -32,5 +32,14 @@ export class UsuarioService {
     return this.usuarioCollection.add(JSON.parse(JSON.stringify(model)));
   }
 
+  getUsuario(id: string): Observable<Usuario> {
+    return this.usuarioCollection.doc<Usuario>(id).valueChanges().pipe(
+        take(1),
+        map(idea => {
+            idea.id = id;
+            return idea;
+        })
+    );
+}
 
 }

@@ -18,7 +18,7 @@ export class StorageService {
   }
   loadSessionData(): Session {
     const sessionStr = this.localStorageService.getItem('currentUser');
-    return (sessionStr) ? <Session>JSON.parse(sessionStr) : null;
+    return (sessionStr) ? <Session> JSON.parse(sessionStr) : null;
   }
   getCurrentSession(): Session {
     return this.currentSession;

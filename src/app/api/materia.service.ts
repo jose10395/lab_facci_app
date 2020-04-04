@@ -1,3 +1,4 @@
+import { NotificacionService } from './notificacion.service';
 import { Injectable } from '@angular/core';
 
 import {
@@ -7,23 +8,9 @@ import {
 import { map, take } from 'rxjs/operators';
 import { Observable, pipe } from 'rxjs';
 import { AulaService, Aula } from './aula.service';
-
-export interface Materia {
-  id?: string;
-  idaula: string;
-  idaula2: string;
-  nombre: string;
-  profesor: string;
-  curso: string;
-  aula: Observable<Aula>;
-  horario: Horario;
-}
-
-export interface Horario {
-  dia: string;
-  horafin: string;
-  horainicio: string;
-}
+import { Materia } from './models/materia';
+import { StorageService } from './storage.service';
+import { UsuarioService } from './usuario.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,25 +19,17 @@ export class MateriaService {
   private materias: Observable<Materia[]>;
   private materiaCollection: AngularFirestoreCollection<Materia>;
 
-  constructor(private afs: AngularFirestore, private aulaService: AulaService) {
+  private materiasusuario: Observable<Materia[]>;
+  private materiaUsuarioCollection: AngularFirestoreCollection<Materia>;
 
-    this.materiaCollection = this.afs.collection<Materia>('MATERIAS');
-    this.materias = this.materiaCollection.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(a => {
-          const id = a.payload.doc.id;
-          const data = a.payload.doc.data();
-
-          console.warn(data);
-
-          data.aula = this.aulaService.getAula(data.idaula);
-          return { id, ...data };
-        });
-      })
-    );
+  constructor(private afs: AngularFirestore, private aulaService: AulaService,
+    // tslint:disable-next-line: align
+    private storageService: StorageService, private usuarioService: UsuarioService, private notificacionService: NotificacionService) {
+    this.actualizarListaObservable();
   }
 
   getMaterias(): Observable<Materia[]> {
+    this.actualizarListaObservable();
     return this.materias;
   }
 
@@ -70,12 +49,80 @@ export class MateriaService {
 
   updateMateria(model: Materia): Promise<void> {
     return this.materiaCollection.doc(model.id).update({
-      idaula: model.idaula, nombre: model.nombre, profesor: model.profesor
+      curso: model.curso,
+      estudiantes: model.estudiantes,
+      horario: model.horario,
+      idaula: model.idaula,
+      nombre: model.nombre,
+      idprofesor: model.idprofesor
     });
   }
 
   deleteMateria(id: string): Promise<void> {
     return this.materiaCollection.doc(id).delete();
+  }
+
+
+  actualizarListaObservable() {
+    const usuario = this.storageService.getCurrentUser();
+    const d = new Date();
+    const dia = Number(d.getDay());
+    this.materiaCollection = this.afs.collection<Materia>('MATERIAS', ref => {
+      if (usuario.tipo === 'Estudiante') {
+        return ref
+          .where('horario.dia', '==', dia.toString())
+          .where('estudiantes', 'array-contains', usuario.id);
+      } else if (usuario.tipo === 'Docente') {
+        return ref
+          .where('horario.dia', '==', dia.toString())
+          .where('idprofesor', '==', usuario.id);
+      }
+    });
+
+    this.materias = this.materiaCollection.snapshotChanges().pipe(
+      map(actions => {
+        return actions.map(a => {
+          const id = a.payload.doc.id;
+          const data = a.payload.doc.data();
+          data.id = id;
+          data.aula = null;
+          data.aula = this.aulaService.getAula(data.idaula);
+          data.notificacion =  null;
+          // data.notificacion = this.notificacionService.getNotificacion('g2ihrC87gxdqnpMs2pXe');
+          data.notificacion = this.notificacionService.get(id);
+          return { id, ...data };
+        });
+      })
+    );
+  }
+
+  getMisMaterias(): Observable<Materia[]> {
+    const usuario = this.storageService.getCurrentUser();
+    this.materiaUsuarioCollection = this.afs.collection<Materia>('MATERIAS', ref => {
+      if (usuario.tipo === 'Estudiante') {
+        return ref
+          .where('estudiantes', 'array-contains', usuario.id);
+      } else if (usuario.tipo === 'Docente') {
+        return ref
+          .where('idprofesor', '==', usuario.id);
+      }
+    });
+
+    this.materiasusuario = this.materiaUsuarioCollection.snapshotChanges().pipe(
+      map(actions => {
+        return actions.map(a => {
+          const id = a.payload.doc.id;
+          const data = a.payload.doc.data();
+          data.aula = null;
+          data.aula = this.aulaService.getAula(data.idaula);
+          data.profesor = null;
+          data.profesor = this.usuarioService.getUsuario(data.idprofesor);
+          return { id, ...data };
+        });
+      })
+    );
+    return this.materiasusuario;
+
   }
 
 }

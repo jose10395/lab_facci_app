@@ -59,7 +59,7 @@ export class AulaService {
     });
   }
 
-  deleteIdea(id: string): Promise<void> {
+  deleteAula(id: string): Promise<void> {
     return this.aulaCollection.doc(id).delete();
   }
 

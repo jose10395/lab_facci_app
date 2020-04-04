@@ -1,0 +1,165 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-menu-button (click)="openMenu()"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Mis Materias
+    </ion-title>
+   
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-list>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          <h2>Lunes</h2>
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let item of lunes;index as i;">
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <h3 *ngIf="(item.profesor | async) as profesor">
+            {{ profesor.nombres }} {{ profesor.apellidos }}
+          </h3>
+          <ion-row>
+            <ion-col class="ion-align-self-center">
+              <p>{{ item.horario.horainicio }} - {{ item.horario.horafin }}</p>
+            </ion-col>
+            <ion-col class="ion-align-self-center ion-text-end">
+              <p>{{ item.curso }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          <h2>Martes</h2>
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let item of martes;index as i;">
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <h3 *ngIf="(item.profesor | async) as profesor">
+            {{ profesor.nombres }} {{ profesor.apellidos }}
+          </h3>
+          <ion-row>
+            <ion-col class="ion-align-self-center">
+              <p>{{ item.horario.horainicio }} - {{ item.horario.horafin }}</p>
+            </ion-col>
+            <ion-col class="ion-align-self-center ion-text-end">
+              <p>{{ item.curso }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          <h2>Miercoles</h2>
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let item of miercoles;index as i;">
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <h3 *ngIf="(item.profesor | async) as profesor">
+            {{ profesor.nombres }} {{ profesor.apellidos }}
+          </h3>
+          <ion-row>
+            <ion-col class="ion-align-self-center">
+              <p>{{ item.horario.horainicio }} - {{ item.horario.horafin }}</p>
+            </ion-col>
+            <ion-col class="ion-align-self-center ion-text-end">
+              <p>{{ item.curso }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          <h2>Jueves</h2>
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let item of jueves;index as i;">
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <h3 *ngIf="(item.profesor | async) as profesor">
+            {{ profesor.nombres }} {{ profesor.apellidos }}
+          </h3>
+          <ion-row>
+            <ion-col class="ion-align-self-center">
+              <p>{{ item.horario.horainicio }} - {{ item.horario.horafin }}</p>
+            </ion-col>
+            <ion-col class="ion-align-self-center ion-text-end">
+              <p>{{ item.curso }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          <h2>Viernes</h2>
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let item of viernes;index as i;">
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <h3 *ngIf="(item.profesor | async) as profesor">
+            {{ profesor.nombres }} {{ profesor.apellidos }}
+          </h3>
+          <ion-row>
+            <ion-col class="ion-align-self-center">
+              <p>{{ item.horario.horainicio }} - {{ item.horario.horafin }}</p>
+            </ion-col>
+            <ion-col class="ion-align-self-center ion-text-end">
+              <p>{{ item.curso }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          <h2>Sábado</h2>
+        </ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let item of sabado;index as i;">
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <h3 *ngIf="(item.profesor | async) as profesor">
+            {{ profesor.nombres }} {{ profesor.apellidos }}
+          </h3>
+          <ion-row>
+            <ion-col class="ion-align-self-center">
+              <p>{{ item.horario.horainicio }} - {{ item.horario.horafin }}</p>
+            </ion-col>
+            <ion-col class="ion-align-self-center ion-text-end">
+              <p>{{ item.curso }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+  </ion-list>
+
+</ion-content>

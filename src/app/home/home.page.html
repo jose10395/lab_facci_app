@@ -1,82 +1,156 @@
 <ion-header>
-  <ion-toolbar color="success">
+  <ion-toolbar color="light">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button (click)="openMenu()"></ion-menu-button>
     </ion-buttons>
     <ion-title>
-      Home
+      {{ title }}
     </ion-title>
 
-    <ion-icon
+    <!-- <ion-icon
       name="more"
       mode="md"
       slot="end"
       size="large"
       (click)="presentActionSheet()"
-    ></ion-icon>
+    ></ion-icon> -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button color="success" size="small">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 
   <!-- Data to display after skeleton screen -->
-  <div *ngIf="materias">
-    <ion-card *ngFor="let materia of materias | async; index as i;">
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            {{ materia.nombre }}
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            {{ materia.curso }}
-          </ion-col>
-          <ion-col class="ion-text-end" *ngIf="(materia.aula)">
-            <ion-toggle
-              *ngIf="allowChange"
-              [checked]="(materia.aula | async).estado=='Libre' ? false:true"
-              color="danger"
-              (ionChange)="changeState(materia.idaula,$event)"
-            ></ion-toggle>
-            <ion-label
-              [ngClass]="(materia.aula | async).estado=='Libre' ? 'libre':'ocupada'"
-              *ngIf="!allowChange"
-              >{{ (materia.aula | async).estado }}</ion-label
+  <div *ngIf="(materias | async) as mts; else loading">
+    <div *ngIf="mts.length === 0">
+      <ion-card>
+        <ion-item color="medium" lines="none">
+          <ion-label>
+            No tienes materia registradas
+          </ion-label>
+        </ion-item>
+      </ion-card>
+    </div>
+
+    <div *ngIf="mts.length > 0">
+      <ion-card
+        *ngFor="let materia of mts; index as i;"
+        style="overflow: visible !important;"
+      >
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              {{ materia.nombre }}
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              {{ materia.curso }}
+            </ion-col>
+            <ion-col
+              class="ion-text-end"
+              *ngIf="(materia.aula | async) as aula"
             >
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            {{ materia.horario.horainicio }} - {{ materia.horario.horafin }}
-          </ion-col>
-          <ion-col class="ion-text-end" *ngIf="(materia.aula)">
-            {{ (materia.aula | async).nombre }}
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-card>
+              {{ aula.nombre }}
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              {{ materia.horario.horainicio }} - {{ materia.horario.horafin }}
+            </ion-col>
+            <ion-col
+              class="ion-text-end"
+              *ngIf="(materia.aula | async) as aula"
+            >
+              <ion-toggle
+                *ngIf="allowChange"
+                [checked]="aula.estado=='Libre' ? false:true"
+                color="danger"
+                (ionChange)="changeState(materia.idaula,$event)"
+              ></ion-toggle>
+              <ion-label
+                [ngClass]="aula.estado=='Libre' ? 'libre':'ocupada'"
+                *ngIf="!allowChange"
+              >
+                {{ aula.estado }}
+              </ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-fab
+          vertical="top"
+          horizontal="end"
+          slot="fixed"
+          *ngIf="(materia.notificacion | async) as notificacion"
+        >
+          <ion-fab-button
+            size="small"
+            class="notificacion"
+            *ngIf="notificacion.length > 0 && !allowChange"
+          >
+            <ion-icon name="notifications"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-list side="start" *ngFor="let item of notificacion">
+            <ion-button color="medium" size="small" class="msj_left_est">
+              {{ item.mensaje }}
+            </ion-button>
+          </ion-fab-list>
+        </ion-fab>
+
+        <ion-fab
+          vertical="top"
+          horizontal="end"
+          slot="fixed"
+          *ngIf="allowChange"
+        >
+          <ion-fab-button size="small" class="notificacion">
+            <ion-icon name="notifications"></ion-icon>
+          </ion-fab-button>
+
+          <ion-fab-list side="bottom">
+            <ion-button
+              color="medium"
+              size="small"
+              class="msj_center"
+              (click)="sendAlert(materia.id , 'Preparando Clase' , 'Estudiante')"
+            >
+              Preparando Clase
+            </ion-button>
+            <ion-button
+              color="medium"
+              size="small"
+              class="msj_bottom"
+              (click)="sendAlert(materia.id,'Clase Aplazada','Estudiante')"
+            >
+              Clase Aplazada
+            </ion-button>
+          </ion-fab-list>
+          <ion-fab-list side="start">
+            <ion-button
+              color="medium"
+              size="small"
+              class="msj_left"
+              (click)="sendAlert(materia.id,'Aula Cerrada','Administrador')"
+            >
+              Aula Cerrada
+            </ion-button>
+          </ion-fab-list>
+        </ion-fab>
+      </ion-card>
+    </div>
   </div>
 
   <!-- Skeleton screen -->
-  <div *ngIf="!materias">
-    <!-- <div class="ion-padding custom-skeleton">
-      <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
-      <ion-skeleton-text animated></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 88%"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 70%"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
-    </div> -->
-
+  <ng-template #loading>
     <ion-list>
-      <ion-list-header>
+      <!-- <ion-list-header>
         <ion-skeleton-text animated style="width: 20%"></ion-skeleton-text>
-      </ion-list-header>
+      </ion-list-header> -->
       <ion-item>
         <ion-thumbnail slot="start">
           <ion-skeleton-text animated></ion-skeleton-text>
@@ -174,5 +248,5 @@
         </ion-label>
       </ion-item>
     </ion-list>
-  </div>
+  </ng-template>
 </ion-content>

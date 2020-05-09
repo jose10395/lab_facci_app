@@ -4,7 +4,6 @@ import { Observable, Subscription } from 'rxjs';
 import { MateriaService } from '../api/materia.service';
 import { Aula, AulaService } from '../api/aula.service';
 import { PopoverController, ActionSheetController, ToastController } from '@ionic/angular';
-import { PopoverComponent } from './popover/popover.component';
 import { StorageService } from '../api/storage.service';
 import { getLocaleTimeFormat } from '@angular/common';
 import { Horario } from '../api/models/horario';
@@ -12,6 +11,7 @@ import { Materia } from '../api/models/materia';
 import { Notificacion } from '../api/models/notificacion';
 import { NotificacionService } from '../api/notificacion.service';
 import { GlobalService } from '../api/global.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +19,7 @@ import { GlobalService } from '../api/global.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
+  scannerCode: any;
   dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
   title = 'APP';
   aula: Observable<Aula>;
@@ -26,11 +27,12 @@ export class HomePage implements OnInit, OnDestroy {
   allowChange = false;
   materia: Materia;
   public materias: Observable<Materia[]>;
+  public materiasfind: Materia[] = [];
   public aulas: Aula[] = [];
   public Subscription: Subscription;
-  constructor(private materiaService: MateriaService, private storageService: StorageService,
+  constructor(private barcode: BarcodeScanner, private materiaService: MateriaService, private storageService: StorageService,
     // tslint:disable-next-line: align
-    public popoverController: PopoverController, public actionSheetController: ActionSheetController,
+    public actionSheetController: ActionSheetController,
     // tslint:disable-next-line: align
     private aulaService: AulaService, private notificacionService: NotificacionService, public toastController: ToastController,
     // tslint:disable-next-line: align
@@ -42,6 +44,9 @@ export class HomePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.materias = this.materiaService.getMaterias();
+    this.materiaService.getMaterias().subscribe(l => {
+      this.materiasfind = l;
+    });
   }
 
   ngOnDestroy() {
@@ -66,13 +71,12 @@ export class HomePage implements OnInit, OnDestroy {
     this.title = this.dias[dia];
   }
 
-  async presentPopover(ev: any) {
-    const popover = await this.popoverController.create({
-      component: PopoverComponent,
-      event: ev,
-      translucent: true
+  scanCode() {
+    this.barcode.scan({prompt : '', resultDisplayDuration: 100}).then(barcodeData => {
+      this.updateEstado(barcodeData.text);
+    }, (err) => {
+      console.log('ERR', err);
     });
-    return await popover.present();
   }
 
   async presentActionSheet() {
@@ -95,6 +99,21 @@ export class HomePage implements OnInit, OnDestroy {
       }]
     });
     await actionSheet.present();
+  }
+
+  updateEstado(id) {
+    if (this.hasExists()) {
+      this.aulaService.getAula(id).subscribe(data => {
+        const nuevoEstado = (data.estado === 'Libre') ? 'Ocupada' : 'Libre';
+        const nuevaActividad = (nuevoEstado === 'Ocupada') ? 'Clases' : '';
+        data.estado = nuevoEstado;
+        data.actividad = nuevaActividad;
+        this.aulaService.updateAula(data);
+        this.materias = this.materiaService.getMaterias();
+      });
+    } else {
+      this.presentToast('Ud no es profesor de esta asignatura');
+    }
   }
 
   changeState(id, $event) {
@@ -134,6 +153,16 @@ export class HomePage implements OnInit, OnDestroy {
       color: 'dark'
     });
     toast.present();
+  }
+
+  hasExists(): boolean {
+    let estado = false;
+    const usr = this.storageService.getCurrentUser();
+    const found = this.materiasfind.find(x => x.idprofesor === usr.id);
+    if (found) {
+      estado = true;
+    }
+    return estado;
   }
 
 }

@@ -7,22 +7,20 @@
       {{ title }}
     </ion-title>
 
-    <!-- <ion-icon
-      name="more"
-      mode="md"
-      slot="end"
-      size="large"
-      (click)="presentActionSheet()"
-    ></ion-icon> -->
+    <!-- <ion-buttons slot="end" style="margin-right:1em !important" *ngIf="allowChange">
+      <ion-icon name="camera" size="large" (click)="scanCode()"></ion-icon>
+    </ion-buttons>
+   -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="success" size="small">
-      <ion-icon name="add"></ion-icon>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="allowChange" (click)="scanCode()">
+    <ion-fab-button>
+      <ion-icon name="camera"></ion-icon>
     </ion-fab-button>
-  </ion-fab> -->
+  </ion-fab>
 
   <!-- Data to display after skeleton screen -->
   <div *ngIf="(materias | async) as mts; else loading">
@@ -66,15 +64,15 @@
               class="ion-text-end"
               *ngIf="(materia.aula | async) as aula"
             >
-              <ion-toggle
+             <!--  <ion-toggle
                 *ngIf="allowChange"
                 [checked]="aula.estado=='Libre' ? false:true"
                 color="danger"
                 (ionChange)="changeState(materia.idaula,$event)"
-              ></ion-toggle>
+              ></ion-toggle> -->
               <ion-label
                 [ngClass]="aula.estado=='Libre' ? 'libre':'ocupada'"
-                *ngIf="!allowChange"
+                
               >
                 {{ aula.estado }}
               </ion-label>
@@ -148,9 +146,6 @@
   <!-- Skeleton screen -->
   <ng-template #loading>
     <ion-list>
-      <!-- <ion-list-header>
-        <ion-skeleton-text animated style="width: 20%"></ion-skeleton-text>
-      </ion-list-header> -->
       <ion-item>
         <ion-thumbnail slot="start">
           <ion-skeleton-text animated></ion-skeleton-text>

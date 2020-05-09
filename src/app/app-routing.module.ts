@@ -29,6 +29,10 @@ const routes: Routes = [
   {
     path: 'materias',
     loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
+  },
+  {
+    path: 'qr',
+    loadChildren: () => import('./qr/qr.module').then( m => m.QrPageModule)
   }
 ];
 

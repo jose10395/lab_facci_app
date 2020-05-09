@@ -21,8 +21,9 @@ import { MateriaService } from './api/materia.service';
 import { UsuarioService } from './api/usuario.service';
 import { AuthGuardService } from './api/auth-guard.service';
 import { StorageService } from './api/storage.service';
-import { PopoverComponent } from './home/popover/popover.component';
 import { MatriculaService } from './api/matricula.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+// import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -39,6 +40,7 @@ import { MatriculaService } from './api/matricula.service';
     AngularFirestoreModule
   ],
   providers: [
+    BarcodeScanner,
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
